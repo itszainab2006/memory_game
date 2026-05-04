@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#080816" />
+  <title>Memory Match — Neon</title>
+
+  <!-- Neon favicon (inline SVG data URL) -->
+  <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='40%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%23b7fffb'/%3E%3Cstop offset='45%25' stop-color='%2300d1ff'/%3E%3Cstop offset='100%25' stop-color='%236b1bff'/%3E%3C/radialGradient%3E%3Cfilter id='glow'%3E%3CfeGaussianBlur stdDeviation='3.2' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Crect width='128' height='128' rx='28' fill='%23070714'/%3E%3Cpath d='M30 44c0-10 8-18 18-18h32c10 0 18 8 18 18v40c0 10-8 18-18 18H48c-10 0-18-8-18-18V44z' fill='url(%23g)' opacity='.22'/%3E%3Cpath filter='url(%23glow)' d='M36 48c0-8 6-14 14-14h28c8 0 14 6 14 14v32c0 8-6 14-14 14H50c-8 0-14-6-14-14V48z' fill='none' stroke='%2300f7ff' stroke-width='4'/%3E%3Cpath filter='url(%23glow)' d='M44 54h20M44 64h26M44 74h16' stroke='%23ff2bd6' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle filter='url(%23glow)' cx='86' cy='82' r='10' fill='%236b1bff'/%3E%3C/svg%3E" />
+
+  <style>
+    :root{
+      --bg0:#05050f;
+      --bg1:#080816;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.10);
+      --text:#eaf2ff;
+      --muted:#a8b3d6;
+      --c1:#00f7ff;
+      --c2:#ff2bd6;
+      --c3:#6b1bff;
+      --ok:#35ff9a;
+      --bad:#ff4d6d;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Tahoma, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 15%, rgba(107,27,255,.22), transparent 60%),
+        radial-gradient(800px 500px at 85% 25%, rgba(0,247,255,.18), transparent 55%),
+        radial-gradient(900px 650px at 55% 85%, rgba(255,43,214,.16), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    .noise{
+      position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+      opacity:.12;
+      mix-blend-mode:overlay;
+      pointer-events:none;
+    }
+
+    .wrap{
+      min-height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px 16px 40px;
+    }
+
+    .app{
+      width:min(980px, 100%);
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    @media (max-width: 900px){
+      .app{ grid-template-columns:1fr; }
+    }
+
+    .card{
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      box-shadow: var(--shadow);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+      overflow:hidden;
+    }
+
+    header{
+      padding:18px 18px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(1000px 140px at 50% 0%, rgba(0,247,255,.16), transparent 60%),
+        radial-gradient(900px 140px at 30% 0%, rgba(255,43,214,.12), transparent 58%);
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width:0;
+    }
+
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background:
+        radial-gradient(60% 60% at 30% 25%, rgba(255,255,255,.25), transparent 60%),
+        radial-gradient(70% 70% at 70% 75%, rgba(255,43,214,.25), transparent 60%),
+        linear-gradient(135deg, rgba(0,247,255,.90), rgba(107,27,255,.90));
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.20) inset,
+        0 0 28px rgba(0,247,255,.25),
+        0 0 34px rgba(255,43,214,.18);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:before{
+      content:"";
+      position:absolute; inset:-40%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.30), transparent);
+      transform: rotate(25deg);
+      animation: sheen 4.8s linear infinite;
+    }
+    @keyframes sheen{
+      0%{ transform:translateX(-40%) rotate(25deg); opacity:.0; }
+      15%{ opacity:.9; }
+      35%{ opacity:.15; }
+      100%{ transform:translateX(45%) rotate(25deg); opacity:0; }
+    }
+
+    .title{
+      min-width:0;
+    }
+    .title h1{
+      margin:0;
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .title p{
+      margin:2px 0 0;
+      font-size:12.5px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+
+    .topActions{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center; justify-content:flex-end;
+    }
+
+    .pill{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:10px 12px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--text);
+    }
+
+    .pill label{
+      font-size:12.5px;
+      color:var(--muted);
+      user-select:none;
+    }
+
+    select{
+      background: transparent;
+      border:none;
+      color:var(--text);
+      outline:none;
+      font-weight:650;
+      cursor:pointer;
+      padding:2px 4px;
+    }
+    select option{ color:#0b0b16; }
+
+    button{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      color:var(--text);
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      padding:10px 12px;
+      border-radius: 14px;
+      font-weight:750;
+      letter-spacing:.2px;
+      transition: transform .08s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    button:hover{
+      background: rgba(255,255,255,.10);
+      border-color: rgba(255,255,255,.22);
+      box-shadow: 0 0 0 1px rgba(0,247,255,.08) inset, 0 0 18px rgba(0,247,255,.10);
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+
+    .primary{
+      background: linear-gradient(135deg, rgba(0,247,255,.18), rgba(255,43,214,.14));
+      border-color: rgba(0,247,255,.28);
+      box-shadow: 0 0 22px rgba(0,247,255,.10), 0 0 26px rgba(255,43,214,.08);
+    }
+
+    .content{
+      padding:16px;
+    }
+
+    .grid{
+      display:grid;
+      gap:12px;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    @media (max-width: 520px){
+      .grid{ grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .tile{
+      position:relative;
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      user-select:none;
+      perspective: 900px;
+    }
+
+    .face{
+      position:absolute; inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius: 16px;
+      backface-visibility: hidden;
+      transform-style: preserve-3d;
+      transition: transform 260ms cubic-bezier(.2,.8,.2,1), box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
+      border:1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+    }
+
+    .front{
+      background:
+        radial-gradient(120px 120px at 35% 25%, rgba(0,247,255,.14), transparent 60%),
+        radial-gradient(140px 140px at 70% 75%, rgba(255,43,214,.12), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      box-shadow: 0 0 0 1px rgba(255,255,255,.05) inset;
+      transform: rotateY(0deg);
+    }
+
+    .back{
+      background:
+        radial-gradient(160px 160px at 30% 20%, rgba(255,255,255,.10), transparent 60%),
+        linear-gradient(135deg, rgba(0,247,255,.12), rgba(107,27,255,.14));
+      transform: rotateY(180deg);
+      border-color: rgba(0,247,255,.22);
+      box-shadow: 0 0 0 1px rgba(0,247,255,.10) inset, 0 0 26px rgba(0,247,255,.10);
+      font-size: clamp(22px, 4vw, 34px);
+    }
+
+    .tile.is-flipped .front{ transform: rotateY(180deg); }
+    .tile.is-flipped .back{ transform: rotateY(360deg); }
+
+    .tile.is-matched .back{
+      border-color: rgba(53,255,154,.40);
+      box-shadow: 0 0 0 1px rgba(53,255,154,.18) inset, 0 0 32px rgba(53,255,154,.16);
+    }
+
+    .spark{
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 30% 20%, rgba(0,247,255,.20), transparent 45%),
+                  radial-gradient(circle at 75% 65%, rgba(255,43,214,.18), transparent 45%);
+      transform: translateZ(20px);
+      filter: blur(10px);
+      pointer-events:none;
+      opacity:.7;
+    }
+
+    .stats{
+      padding:16px;
+      display:grid;
+      gap:12px;
+    }
+
+    .panel{
+      padding:14px;
+      border-radius: var(--radius);
+      background: rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .kpis{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+    }
+    @media (max-width: 900px){
+      .kpis{ grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 520px){
+      .kpis{ grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .kpi{
+      padding:12px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .kpi .label{
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:6px;
+    }
+    .kpi .value{
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:.3px;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .toast{
+      position: fixed;
+      inset: auto 16px 16px 16px;
+      display:flex;
+      justify-content:center;
+      pointer-events:none;
+      z-index: 50;
+    }
+    .toast > div{
+      width:min(720px, 100%);
+      padding:12px 14px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.14);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      color: var(--text);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      opacity:0;
+      transform: translateY(8px);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    .toast.show > div{ opacity:1; transform: translateY(0); }
+    .toast .msg{ font-weight:650; }
+    .toast .small{ color:var(--muted); font-size:12.5px; font-weight:600; }
+    .sr{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+  </style>
+</head>
+
+<body>
+  <div class="noise"></div>
+
+  <div class="wrap">
+    <div class="app">
+      <section class="card">
+        <header>
+          <div class="brand">
+            <div class="logo" aria-hidden="true"></div>
+            <div class="title">
+              <h1>لعبة مطابقة الأوراق</h1>
+              <p>قلب ورقتين… إذا تطابقوا تبقى مضيئة. كم حركة تحتاج حتى تنهيها؟</p>
+            </div>
+          </div>
+
+          <div class="topActions">
+            <div class="pill">
+              <label for="difficulty">الصعوبة</label>
+              <select id="difficulty" aria-label="اختيار الصعوبة">
+                <option value="easy">سهل (4×3)</option>
+                <option value="medium" selected>متوسط (4×4)</option>
+                <option value="hard">صعب (6×4)</option>
+              </select>
+            </div>
+            <button id="newGame" class="primary" type="button">لعبة جديدة</button>
+          </div>
+        </header>
+
+        <div class="content">
+          <div id="grid" class="grid" aria-label="لوحة اللعب"></div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <div class="stats">
+          <div class="panel">
+            <div class="kpis">
+              <div class="kpi">
+                <div class="label">الحركات</div>
+                <div class="value" id="moves">0</div>
+              </div>
+              <div class="kpi">
+                <div class="label">الوقت</div>
+                <div class="value" id="time">00:00</div>
+              </div>
+              <div class="kpi">
+                <div class="label">التطابقات</div>
+                <div class="value"><span id="matched">0</span>/<span id="pairs">0</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="hint">
+              <b>تحكم سريع</b><br>
+              - اضغط/انقر لقلب الورقة<br>
+              - بالكيبورد: Tab للتنقل و Enter/Space للقلب<br>
+              - ابدأ “لعبة جديدة” لخلط البطاقات<br><br>
+              <b>نصيحة</b>: ركّز على مكان الرموز بدل فتح عشوائي.
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="hint">
+              <b>ستريك (اختياري)</b><br>
+              إذا تحب، أضيف لك نظام نقاط/أفضل وقت/أفضل حركات وتخزينها بالمتصفح.
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div>
+      <div>
+        <div class="msg" id="toastMsg">جاهز</div>
+        <div class="small" id="toastSub">ابدأ بقلب ورقتين</div>
+      </div>
+      <span class="sr" id="toastSr">تنبيه</span>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const gridEl = document.getElementById('grid');
+  const difficultyEl = document.getElementById('difficulty');
+  const newGameEl = document.getElementById('newGame');
+
+  const movesEl = document.getElementById('moves');
+  const timeEl = document.getElementById('time');
+  const matchedEl = document.getElementById('matched');
+  const pairsEl = document.getElementById('pairs');
+
+  const toastEl = document.getElementById('toast');
+  const toastMsgEl = document.getElementById('toastMsg');
+  const toastSubEl = document.getElementById('toastSub');
+
+  const ICONS = ["⚡","🌙","💠","🔥","🧊","🌈","✨","🎧","🕹️","🪐","💜","🔷","🔮","🦋","🧪","🍭","💿","🧿"];
+
+  const state = {
+    tiles: [],
+    first: null,
+    second: null,
+    locked: false,
+    moves: 0,
+    matchedPairs: 0,
+    totalPairs: 0,
+    startedAt: null,
+    timerId: null,
+  };
+
+  function toast(msg, sub="") {
+    toastMsgEl.textContent = msg;
+    toastSubEl.textContent = sub;
+    toastEl.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toastEl.classList.remove('show'), 2200);
+  }
+
+  function pad2(n){ return String(n).padStart(2,"0"); }
+  function fmtTime(ms){
+    const s = Math.floor(ms/1000);
+    const m = Math.floor(s/60);
+    return `${pad2(m)}:${pad2(s%60)}`;
+  }
+
+  function startTimerIfNeeded(){
+    if (state.startedAt) return;
+    state.startedAt = Date.now();
+    state.timerId = setInterval(() => {
+      timeEl.textContent = fmtTime(Date.now() - state.startedAt);
+    }, 250);
+  }
+
+  function stopTimer(){
+    if (state.timerId) clearInterval(state.timerId);
+    state.timerId = null;
+  }
+
+  function resetHUD() {
+    state.moves = 0;
+    state.matchedPairs = 0;
+    movesEl.textContent = "0";
+    matchedEl.textContent = "0";
+    timeEl.textContent = "00:00";
+  }
+
+  function shuffle(arr){
+    for (let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function configForDifficulty(v){
+    if (v === "easy") return { cols: 4, rows: 3 };
+    if (v === "hard") return { cols: 6, rows: 4 };
+    return { cols: 4, rows: 4 };
+  }
+
+  function buildDeck(cols, rows){
+    const total = cols * rows;
+    const pairs = Math.floor(total / 2);
+    const picks = shuffle(ICONS.slice()).slice(0, pairs);
+    const deck = shuffle([...picks, ...picks]).map((icon, idx) => ({
+      id: `t_${idx}_${Math.random().toString(16).slice(2)}`,
+      icon,
+      flipped: false,
+      matched: false,
+    }));
+    return { deck, pairs, total };
+  }
+
+  function renderGrid(cols){
+    gridEl.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    gridEl.innerHTML = "";
+    for (const t of state.tiles){
+      const tile = document.createElement("button");
+      tile.type = "button";
+      tile.className = "tile";
+      tile.setAttribute("data-id", t.id);
+      tile.setAttribute("aria-label", "ورقة");
+      tile.setAttribute("aria-pressed", "false");
+
+      const front = document.createElement("div");
+      front.className = "face front";
+      front.innerHTML = `<div class="spark" aria-hidden="true"></div>`;
+
+      const back = document.createElement("div");
+      back.className = "face back";
+      back.textContent = t.icon;
+
+      tile.appendChild(front);
+      tile.appendChild(back);
+
+      tile.addEventListener("click", () => onFlip(t.id));
+      gridEl.appendChild(tile);
+    }
+  }
+
+  function getTileModel(id){ return state.tiles.find(t => t.id === id); }
+  function getTileEl(id){ return gridEl.querySelector(`.tile[data-id="${CSS.escape(id)}"]`); }
+
+  function setFlipped(id, flipped){
+    const t = getTileModel(id);
+    if (!t) return;
+    t.flipped = flipped;
+    const el = getTileEl(id);
+    if (!el) return;
+    el.classList.toggle("is-flipped", flipped);
+    el.setAttribute("aria-pressed", flipped ? "true" : "false");
+  }
+
+  function setMatched(id, matched){
+    const t = getTileModel(id);
+    if (!t) return;
+    t.matched = matched;
+    const el = getTileEl(id);
+    if (!el) return;
+    el.classList.toggle("is-matched", matched);
+    el.disabled = matched;
+    el.setAttribute("aria-label", matched ? "مطابقة" : "ورقة");
+  }
+
+  function bumpMoves(){
+    state.moves += 1;
+    movesEl.textContent = String(state.moves);
+  }
+
+  function clearSelection(){
+    state.first = null;
+    state.second = null;
+  }
+
+  function allDone(){
+    return state.matchedPairs === state.totalPairs && state.totalPairs > 0;
+  }
+
+  function finish(){
+    stopTimer();
+    const elapsed = state.startedAt ? (Date.now() - state.startedAt) : 0;
+    toast("خلصتها!", `وقت: ${fmtTime(elapsed)} — حركات: ${state.moves}`);
+  }
+
+  function onFlip(id){
+    if (state.locked) return;
+
+    const t = getTileModel(id);
+    if (!t || t.matched || t.flipped) return;
+
+    startTimerIfNeeded();
+    setFlipped(id, true);
+
+    if (!state.first){
+      state.first = id;
+      return;
+    }
+
+    state.second = id;
+    bumpMoves();
+
+    const a = getTileModel(state.first);
+    const b = getTileModel(state.second);
+
+    if (a && b && a.icon === b.icon){
+      state.locked = true;
+      setTimeout(() => {
+        setMatched(a.id, true);
+        setMatched(b.id, true);
+        state.matchedPairs += 1;
+        matchedEl.textContent = String(state.matchedPairs);
+
+        state.locked = false;
+        clearSelection();
+
+        if (allDone()) finish();
+        else toast("تطابق!", `باقي ${state.totalPairs - state.matchedPairs} زوج`);
+      }, 260);
+    } else {
+      state.locked = true;
+      setTimeout(() => {
+        setFlipped(a.id, false);
+        setFlipped(b.id, false);
+        state.locked = false;
+        clearSelection();
+      }, 640);
+    }
+  }
+
+  function newGame(){
+    stopTimer();
+    state.startedAt = null;
+    state.timerId = null;
+    state.locked = false;
+    clearSelection();
+    resetHUD();
+
+    const { cols, rows } = configForDifficulty(difficultyEl.value);
+    const { deck, pairs } = buildDeck(cols, rows);
+
+    state.tiles = deck;
+    state.totalPairs = pairs;
+
+    pairsEl.textContent = String(pairs);
+    renderGrid(cols);
+
+    toast("لعبة جديدة", "حاول تحفظ أماكن الرموز");
+  }
+
+  newGameEl.addEventListener("click", newGame);
+  difficultyEl.addEventListener("change", newGame);
+
+  // Start
+  newGame();
+})();
+</script>
+</body>
+</html>
