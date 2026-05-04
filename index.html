@@ -6,16 +6,13 @@
   <meta name="theme-color" content="#080816" />
   <title>Memory Match — Neon</title>
 
-  <!-- Neon favicon (inline SVG data URL) -->
   <link rel="icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='40%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%23b7fffb'/%3E%3Cstop offset='45%25' stop-color='%2300d1ff'/%3E%3Cstop offset='100%25' stop-color='%236b1bff'/%3E%3C/radialGradient%3E%3Cfilter id='glow'%3E%3CfeGaussianBlur stdDeviation='3.2' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Crect width='128' height='128' rx='28' fill='%23070714'/%3E%3Cpath d='M30 44c0-10 8-18 18-18h32c10 0 18 8 18 18v40c0 10-8 18-18 18H48c-10 0-18-8-18-18V44z' fill='url(%23g)' opacity='.22'/%3E%3Cpath filter='url(%23glow)' d='M36 48c0-8 6-14 14-14h28c8 0 14 6 14 14v32c0 8-6 14-14 14H50c-8 0-14-6-14-14V48z' fill='none' stroke='%2300f7ff' stroke-width='4'/%3E%3Cpath filter='url(%23glow)' d='M44 54h20M44 64h26M44 74h16' stroke='%23ff2bd6' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle filter='url(%23glow)' cx='86' cy='82' r='10' fill='%236b1bff'/%3E%3C/svg%3E" />
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128' viewBox='0 0 128 128'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='40%25' r='70%25'%3E%3Cstop offset='0%25' stop-color='%23b7fffb'/%3E%3Cstop offset='45%25' stop-color='%2300d1ff'/%3E%3Cstop offset='100%25' stop-color='%236b1bff'/%3E%3C/radialGradient%3E%3Cfilter id='glow'%3E%3CfeGaussianBlur stdDeviation='3.2' result='b'/%3E%3CfeMerge%3E%3CfeMergeNode in='b'/%3E%3CfeMergeNode in='SourceGraphic'/%3E%3C/feMerge%3E%3C/filter%3E%3C/defs%3E%3Crect width='128' height='128' rx='28' fill='%23070714'/%3E%3Cpath filter='url(%23glow)' d='M28 40c0-10 8-18 18-18h36c10 0 18 8 18 18v44c0 10-8 18-18 18H46c-10 0-18-8-18-18V40z' fill='none' stroke='%2300f7ff' stroke-width='4'/%3E%3Cpath filter='url(%23glow)' d='M42 58h26M42 70h30' stroke='%23ff2bd6' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
 
   <style>
     :root{
       --bg0:#05050f;
       --bg1:#080816;
-      --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.10);
       --text:#eaf2ff;
       --muted:#a8b3d6;
       --c1:#00f7ff;
@@ -26,7 +23,6 @@
       --shadow: 0 18px 60px rgba(0,0,0,.55);
       --radius: 18px;
     }
-
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
@@ -40,7 +36,6 @@
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
     }
-
     .noise{
       position:fixed; inset:0;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
@@ -48,7 +43,6 @@
       mix-blend-mode:overlay;
       pointer-events:none;
     }
-
     .wrap{
       min-height:100%;
       display:flex;
@@ -56,7 +50,6 @@
       justify-content:center;
       padding:28px 16px 40px;
     }
-
     .app{
       width:min(980px, 100%);
       display:grid;
@@ -64,11 +57,7 @@
       gap:18px;
       align-items:start;
     }
-
-    @media (max-width: 900px){
-      .app{ grid-template-columns:1fr; }
-    }
-
+    @media (max-width: 900px){ .app{ grid-template-columns:1fr; } }
     .card{
       border-radius: var(--radius);
       background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
@@ -77,7 +66,6 @@
       backdrop-filter: blur(10px);
       overflow:hidden;
     }
-
     header{
       padding:18px 18px 14px;
       display:flex;
@@ -89,12 +77,7 @@
         radial-gradient(1000px 140px at 50% 0%, rgba(0,247,255,.16), transparent 60%),
         radial-gradient(900px 140px at 30% 0%, rgba(255,43,214,.12), transparent 58%);
     }
-
-    .brand{
-      display:flex; align-items:center; gap:12px;
-      min-width:0;
-    }
-
+    .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
     .logo{
       width:44px; height:44px; border-radius:14px;
       background:
@@ -121,64 +104,26 @@
       35%{ opacity:.15; }
       100%{ transform:translateX(45%) rotate(25deg); opacity:0; }
     }
+    .title{ min-width:0; }
+    .title h1{ margin:0; font-size:18px; font-weight:800; }
+    .title p{ margin:2px 0 0; font-size:12.5px; color:var(--muted); line-height:1.4; }
 
-    .title{
-      min-width:0;
-    }
-    .title h1{
-      margin:0;
-      font-size:18px;
-      font-weight:800;
-      letter-spacing:.2px;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .title p{
-      margin:2px 0 0;
-      font-size:12.5px;
-      color:var(--muted);
-      line-height:1.4;
-    }
-
-    .topActions{
-      display:flex; gap:10px; flex-wrap:wrap;
-      align-items:center; justify-content:flex-end;
-    }
-
+    .topActions{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:flex-end; }
     .pill{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      padding:10px 12px;
-      border-radius: 999px;
+      display:flex; gap:10px; align-items:center;
+      padding:10px 12px; border-radius: 999px;
       background: rgba(0,0,0,.22);
       border:1px solid rgba(255,255,255,.12);
       color:var(--text);
     }
-
-    .pill label{
-      font-size:12.5px;
-      color:var(--muted);
-      user-select:none;
-    }
-
+    .pill label{ font-size:12.5px; color:var(--muted); user-select:none; }
     select{
-      background: transparent;
-      border:none;
-      color:var(--text);
-      outline:none;
-      font-weight:650;
-      cursor:pointer;
-      padding:2px 4px;
+      background: transparent; border:none; color:var(--text);
+      outline:none; font-weight:650; cursor:pointer; padding:2px 4px;
     }
     select option{ color:#0b0b16; }
-
     button{
-      appearance:none;
-      border:none;
-      cursor:pointer;
-      color:var(--text);
+      appearance:none; border:none; cursor:pointer; color:var(--text);
       background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.14);
       padding:10px 12px;
@@ -193,25 +138,15 @@
       box-shadow: 0 0 0 1px rgba(0,247,255,.08) inset, 0 0 18px rgba(0,247,255,.10);
     }
     button:active{ transform: translateY(1px) scale(.99); }
-
     .primary{
       background: linear-gradient(135deg, rgba(0,247,255,.18), rgba(255,43,214,.14));
       border-color: rgba(0,247,255,.28);
       box-shadow: 0 0 22px rgba(0,247,255,.10), 0 0 26px rgba(255,43,214,.08);
     }
 
-    .content{
-      padding:16px;
-    }
-
-    .grid{
-      display:grid;
-      gap:12px;
-      grid-template-columns: repeat(4, 1fr);
-    }
-    @media (max-width: 520px){
-      .grid{ grid-template-columns: repeat(3, 1fr); }
-    }
+    .content{ padding:16px; }
+    .grid{ display:grid; gap:12px; grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 520px){ .grid{ grid-template-columns: repeat(3, 1fr); } }
 
     .tile{
       position:relative;
@@ -219,13 +154,11 @@
       border-radius: 16px;
       user-select:none;
       perspective: 900px;
+      padding:0;
     }
-
     .face{
       position:absolute; inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      display:flex; align-items:center; justify-content:center;
       border-radius: 16px;
       backface-visibility: hidden;
       transform-style: preserve-3d;
@@ -233,7 +166,6 @@
       border:1px solid rgba(255,255,255,.12);
       overflow:hidden;
     }
-
     .front{
       background:
         radial-gradient(120px 120px at 35% 25%, rgba(0,247,255,.14), transparent 60%),
@@ -242,25 +174,20 @@
       box-shadow: 0 0 0 1px rgba(255,255,255,.05) inset;
       transform: rotateY(0deg);
     }
-
     .back{
       background:
         radial-gradient(160px 160px at 30% 20%, rgba(255,255,255,.10), transparent 60%),
-        linear-gradient(135deg, rgba(0,247,255,.12), rgba(107,27,255,.14));
+        linear-gradient(135deg, rgba(0,247,255,.10), rgba(107,27,255,.12));
       transform: rotateY(180deg);
       border-color: rgba(0,247,255,.22);
       box-shadow: 0 0 0 1px rgba(0,247,255,.10) inset, 0 0 26px rgba(0,247,255,.10);
-      font-size: clamp(22px, 4vw, 34px);
     }
-
     .tile.is-flipped .front{ transform: rotateY(180deg); }
     .tile.is-flipped .back{ transform: rotateY(360deg); }
-
     .tile.is-matched .back{
       border-color: rgba(53,255,154,.40);
       box-shadow: 0 0 0 1px rgba(53,255,154,.18) inset, 0 0 32px rgba(53,255,154,.16);
     }
-
     .spark{
       position:absolute; inset:-40%;
       background: radial-gradient(circle at 30% 20%, rgba(0,247,255,.20), transparent 45%),
@@ -270,62 +197,39 @@
       pointer-events:none;
       opacity:.7;
     }
-
-    .stats{
-      padding:16px;
-      display:grid;
-      gap:12px;
+    .avatar{
+      width: 78%;
+      height: 78%;
+      border-radius: 18px;
+      object-fit: cover;
+      transform: translateZ(16px);
+      box-shadow: 0 0 0 1px rgba(255,255,255,.18) inset;
+      background: rgba(0,0,0,.18);
     }
 
+    .stats{ padding:16px; display:grid; gap:12px; }
     .panel{
       padding:14px;
       border-radius: var(--radius);
       background: rgba(0,0,0,.20);
       border:1px solid rgba(255,255,255,.12);
     }
-
-    .kpis{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:10px;
-    }
-    @media (max-width: 900px){
-      .kpis{ grid-template-columns: repeat(3, 1fr); }
-    }
-    @media (max-width: 520px){
-      .kpis{ grid-template-columns: repeat(2, 1fr); }
-    }
-
+    .kpis{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+    @media (max-width: 520px){ .kpis{ grid-template-columns: repeat(2, 1fr); } }
     .kpi{
       padding:12px;
       border-radius: 16px;
       background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
       border:1px solid rgba(255,255,255,.12);
     }
-    .kpi .label{
-      color:var(--muted);
-      font-size:12px;
-      margin-bottom:6px;
-    }
-    .kpi .value{
-      font-size:18px;
-      font-weight:900;
-      letter-spacing:.3px;
-    }
-
-    .hint{
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.7;
-    }
+    .kpi .label{ color:var(--muted); font-size:12px; margin-bottom:6px; }
+    .kpi .value{ font-size:18px; font-weight:900; letter-spacing:.3px; }
+    .hint{ color:var(--muted); font-size:13px; line-height:1.7; }
 
     .toast{
-      position: fixed;
-      inset: auto 16px 16px 16px;
-      display:flex;
-      justify-content:center;
-      pointer-events:none;
-      z-index: 50;
+      position: fixed; inset: auto 16px 16px 16px;
+      display:flex; justify-content:center;
+      pointer-events:none; z-index: 50;
     }
     .toast > div{
       width:min(720px, 100%);
@@ -336,12 +240,8 @@
       backdrop-filter: blur(10px);
       box-shadow: var(--shadow);
       color: var(--text);
-      display:flex;
-      gap:10px;
-      align-items:center;
-      justify-content:space-between;
-      opacity:0;
-      transform: translateY(8px);
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      opacity:0; transform: translateY(8px);
       transition: opacity .18s ease, transform .18s ease;
     }
     .toast.show > div{ opacity:1; transform: translateY(0); }
@@ -362,7 +262,7 @@
             <div class="logo" aria-hidden="true"></div>
             <div class="title">
               <h1>لعبة مطابقة الأوراق</h1>
-              <p>قلب ورقتين… إذا تطابقوا تبقى مضيئة. كم حركة تحتاج حتى تنهيها؟</p>
+              <p>الوقت محدود 30 ثانية… والورق يقفل بسرعة!</p>
             </div>
           </div>
 
@@ -393,8 +293,8 @@
                 <div class="value" id="moves">0</div>
               </div>
               <div class="kpi">
-                <div class="label">الوقت</div>
-                <div class="value" id="time">00:00</div>
+                <div class="label">الوقت المتبقي</div>
+                <div class="value" id="timeLeft">30</div>
               </div>
               <div class="kpi">
                 <div class="label">التطابقات</div>
@@ -405,18 +305,10 @@
 
           <div class="panel">
             <div class="hint">
-              <b>تحكم سريع</b><br>
-              - اضغط/انقر لقلب الورقة<br>
-              - بالكيبورد: Tab للتنقل و Enter/Space للقلب<br>
-              - ابدأ “لعبة جديدة” لخلط البطاقات<br><br>
-              <b>نصيحة</b>: ركّز على مكان الرموز بدل فتح عشوائي.
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="hint">
-              <b>ستريك (اختياري)</b><br>
-              إذا تحب، أضيف لك نظام نقاط/أفضل وقت/أفضل حركات وتخزينها بالمتصفح.
+              <b>القواعد</b><br>
+              - عند الخطأ: الورقتين يقفلون بعد <b>600ms</b><br>
+              - عند انتهاء <b>30 ثانية</b>: تنتهي اللعبة<br>
+              - الهدف: طابق كل الأزواج قبل انتهاء الوقت
             </div>
           </div>
         </div>
@@ -428,7 +320,7 @@
     <div>
       <div>
         <div class="msg" id="toastMsg">جاهز</div>
-        <div class="small" id="toastSub">ابدأ بقلب ورقتين</div>
+        <div class="small" id="toastSub">ابدأ بسرعة</div>
       </div>
       <span class="sr" id="toastSr">تنبيه</span>
     </div>
@@ -441,7 +333,7 @@
   const newGameEl = document.getElementById('newGame');
 
   const movesEl = document.getElementById('moves');
-  const timeEl = document.getElementById('time');
+  const timeLeftEl = document.getElementById('timeLeft');
   const matchedEl = document.getElementById('matched');
   const pairsEl = document.getElementById('pairs');
 
@@ -449,7 +341,30 @@
   const toastMsgEl = document.getElementById('toastMsg');
   const toastSubEl = document.getElementById('toastSub');
 
-  const ICONS = ["⚡","🌙","💠","🔥","🧊","🌈","✨","🎧","🕹️","🪐","💜","🔷","🔮","🦋","🧪","🍭","💿","🧿"];
+  const REVEAL_MS = 600;     // طلبك: تقليل وقت بقاء الورقة مفتوحة
+  const ROUND_SECONDS = 30;  // طلبك: عدّاد تنازلي 30 ثانية
+
+  // صور شخصيات كرتونية من النت (DiceBear avatars)
+  const AVATARS = [
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=NeonFox",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=PinkNinja",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=CyberCat",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=GlowPanda",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=VoltKoala",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=MoonBunny",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=StarOtter",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=NovaBear",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=PixelDragon",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=LaserFrog",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=PurpleRaccoon",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=ElectroDeer",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=NeonTurtle",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=CyberPenguin",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=MagentaShark",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=BlueTiger",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=VioletWolf",
+    "https://api.dicebear.com/9.x/bottts-neutral/png?seed=AquaDolphin"
+  ];
 
   const state = {
     tiles: [],
@@ -459,8 +374,9 @@
     moves: 0,
     matchedPairs: 0,
     totalPairs: 0,
-    startedAt: null,
-    timerId: null,
+    timeLeft: ROUND_SECONDS,
+    countdownId: null,
+    gameOver: false,
   };
 
   function toast(msg, sub="") {
@@ -469,34 +385,6 @@
     toastEl.classList.add('show');
     clearTimeout(toast._t);
     toast._t = setTimeout(() => toastEl.classList.remove('show'), 2200);
-  }
-
-  function pad2(n){ return String(n).padStart(2,"0"); }
-  function fmtTime(ms){
-    const s = Math.floor(ms/1000);
-    const m = Math.floor(s/60);
-    return `${pad2(m)}:${pad2(s%60)}`;
-  }
-
-  function startTimerIfNeeded(){
-    if (state.startedAt) return;
-    state.startedAt = Date.now();
-    state.timerId = setInterval(() => {
-      timeEl.textContent = fmtTime(Date.now() - state.startedAt);
-    }, 250);
-  }
-
-  function stopTimer(){
-    if (state.timerId) clearInterval(state.timerId);
-    state.timerId = null;
-  }
-
-  function resetHUD() {
-    state.moves = 0;
-    state.matchedPairs = 0;
-    movesEl.textContent = "0";
-    matchedEl.textContent = "0";
-    timeEl.textContent = "00:00";
   }
 
   function shuffle(arr){
@@ -516,14 +404,14 @@
   function buildDeck(cols, rows){
     const total = cols * rows;
     const pairs = Math.floor(total / 2);
-    const picks = shuffle(ICONS.slice()).slice(0, pairs);
-    const deck = shuffle([...picks, ...picks]).map((icon, idx) => ({
+    const picks = shuffle(AVATARS.slice()).slice(0, pairs);
+    const deck = shuffle([...picks, ...picks]).map((src, idx) => ({
       id: `t_${idx}_${Math.random().toString(16).slice(2)}`,
-      icon,
+      src,
       flipped: false,
       matched: false,
     }));
-    return { deck, pairs, total };
+    return { deck, pairs };
   }
 
   function renderGrid(cols){
@@ -543,7 +431,15 @@
 
       const back = document.createElement("div");
       back.className = "face back";
-      back.textContent = t.icon;
+
+      const img = document.createElement("img");
+      img.className = "avatar";
+      img.alt = "شخصية";
+      img.loading = "lazy";
+      img.referrerPolicy = "no-referrer";
+      img.src = t.src;
+
+      back.appendChild(img);
 
       tile.appendChild(front);
       tile.appendChild(back);
@@ -591,19 +487,43 @@
     return state.matchedPairs === state.totalPairs && state.totalPairs > 0;
   }
 
-  function finish(){
-    stopTimer();
-    const elapsed = state.startedAt ? (Date.now() - state.startedAt) : 0;
-    toast("خلصتها!", `وقت: ${fmtTime(elapsed)} — حركات: ${state.moves}`);
+  function stopCountdown(){
+    if (state.countdownId) clearInterval(state.countdownId);
+    state.countdownId = null;
+  }
+
+  function startCountdown(){
+    stopCountdown();
+    state.timeLeft = ROUND_SECONDS;
+    timeLeftEl.textContent = String(state.timeLeft);
+    state.countdownId = setInterval(() => {
+      if (state.gameOver) return;
+      state.timeLeft -= 1;
+      timeLeftEl.textContent = String(Math.max(0, state.timeLeft));
+      if (state.timeLeft <= 0){
+        endGame(false);
+      }
+    }, 1000);
+  }
+
+  function endGame(won){
+    state.gameOver = true;
+    stopCountdown();
+    state.locked = true;
+
+    // تعطيل كل البلاطات
+    gridEl.querySelectorAll(".tile").forEach(btn => btn.disabled = true);
+
+    if (won) toast("مبروك! فزت", `حركات: ${state.moves} — بقي ${state.timeLeft}s`);
+    else toast("انتهى الوقت!", `حركات: ${state.moves} — جرّب لعبة جديدة`);
   }
 
   function onFlip(id){
-    if (state.locked) return;
+    if (state.gameOver || state.locked) return;
 
     const t = getTileModel(id);
     if (!t || t.matched || t.flipped) return;
 
-    startTimerIfNeeded();
     setFlipped(id, true);
 
     if (!state.first){
@@ -617,7 +537,7 @@
     const a = getTileModel(state.first);
     const b = getTileModel(state.second);
 
-    if (a && b && a.icon === b.icon){
+    if (a && b && a.src === b.src){
       state.locked = true;
       setTimeout(() => {
         setMatched(a.id, true);
@@ -628,24 +548,29 @@
         state.locked = false;
         clearSelection();
 
-        if (allDone()) finish();
-        else toast("تطابق!", `باقي ${state.totalPairs - state.matchedPairs} زوج`);
-      }, 260);
+        if (allDone()) endGame(true);
+      }, 220);
     } else {
       state.locked = true;
       setTimeout(() => {
-        setFlipped(a.id, false);
-        setFlipped(b.id, false);
+        if (a) setFlipped(a.id, false);
+        if (b) setFlipped(b.id, false);
         state.locked = false;
         clearSelection();
-      }, 640);
+      }, REVEAL_MS); // 600ms
     }
   }
 
+  function resetHUD(){
+    state.moves = 0;
+    state.matchedPairs = 0;
+    movesEl.textContent = "0";
+    matchedEl.textContent = "0";
+    timeLeftEl.textContent = String(ROUND_SECONDS);
+  }
+
   function newGame(){
-    stopTimer();
-    state.startedAt = null;
-    state.timerId = null;
+    state.gameOver = false;
     state.locked = false;
     clearSelection();
     resetHUD();
@@ -659,13 +584,13 @@
     pairsEl.textContent = String(pairs);
     renderGrid(cols);
 
-    toast("لعبة جديدة", "حاول تحفظ أماكن الرموز");
+    startCountdown();
+    toast("لعبة جديدة", "30 ثانية… لا تضيع وقت");
   }
 
   newGameEl.addEventListener("click", newGame);
   difficultyEl.addEventListener("change", newGame);
 
-  // Start
   newGame();
 })();
 </script>
